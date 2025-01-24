@@ -25,26 +25,55 @@
         </div>
 
         <div id="main-panel">
-            <div id="historico-content">
-                <div id="lista-itens">
-                    <table id="tabela-itens">
-                        <tr>
-                            <th>ID</th>
-                            <th>Data do agendamento</th>
-                            <th>Status</th>
-                            <th>Ações</th>
-                        </tr>
-                    </table>
+            <% if (itens.length !== 0) { %>
+                <div id="historico-content">
+                    <div id="lista-itens">
+                        <table id="tabela-itens">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Data do agendamento</th>
+                                    <th>Status</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabela-body-itens">
+                                <% const hoje = new Date(dataHoje) %>
+                                <% itens.forEach(element => { %>
+                                    <% const [data, hora] = element.data_atendimento.split(' ') %>
+                                    <% const [dia, mes, ano] = data.split('/') %>
+                                    <% const dataAtend = new Date(`${ano}-${mes.padStart(2, '0')}-${dia.padStart(2, '0')} ${hora}`) %>
+                                    <tr>
+                                        <td><%= element.idAgenda %></td>
+                                        <td><%= element.data_atendimento %></td>
+                                        <td><%= element.ativo === 1 ? 'Ativo' : 'Concluído' %></td>
+                                        <td>
+                                            <a href="/historico-detalhe?dataatendimento=<%=element.data_atendimento%>">Detalhes</a>
+                                            <% if (element.ativo === 1 && (((dataAtend - hoje) / (1000 * 60 * 60 * 24)) >= 2) ) { %>
+                                                <a href="/historico-editar?dataatendimento=<%=element.data_atendimento%>">Editar</a>
+                                            <% } %>
+                                        </td>
+                                    </tr>
+                                <% }); %>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="paginacao">
+                        <% if (paginaAtual > 1) { %>
+                            <a href="/historico?pagina=<%= paginaAtual - 1 %>">Anterior</a>
+                        <% } %>
+
+                        <span>Página: <%= paginaAtual %></span>
+
+                        <% if (paginaAtual < totalPaginas) { %>
+                            <a href="/historico?pagina=<%= paginaAtual + 1 %>">Próxima</a>
+                        <% } %>
+                    </div>
                 </div>
-                <div id="paginacao">
-                    <button id="anterior" onclick="paginaAnterior()">Anterior</button>
-                    <span>Página <span id="pagina-atual"></span> de <span id="total-paginas"></span></span>
-                    <button id="proximo" onclick="proximaPagina()">Próximo</button>
-                </div>
-            </div>
+            <% } else { %>
+                <h2>Nenhum agendamento encontrado</h2>
+            <% } %>
         </div>
     </main>
-    
-    <script src="../global/scripts/historico.index.js"></script>
 </body>
 </html>

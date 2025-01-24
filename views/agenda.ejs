@@ -75,7 +75,7 @@
             
                     <div class="nice-form-group">
                         <label for="fdata">Data do atendimento</label>
-                        <input type="date" id="fdata" name="fdata" />
+                        <input type="date" id="fdata" name="fdata" required />
                         <small id="cdata" class="error-message"><%= dataError %></small>
                     </div>
 
@@ -92,9 +92,7 @@
                         <textarea name="fobs" id="fobs" rows="5"></textarea>
                     </div>
 
-                    <div class="nice-form-group confirmacao">
-                        <input type="text" id="fconfirm" name="fconfirm" value="<%= userConfirmacao %>" />
-                    </div>
+                    <input type="text" class="confirmacao" id="fconfirm" name="fconfirm" value="<%= userConfirmacao %>" />
             
                     <button id="submitBtn" type="submit">Agendar</button>
                 </form>
@@ -105,13 +103,15 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const verif = '<%= agendaMesmaData %>'
-            if (verif !== "false") {
-                const opt = confirm('Você possui um agendamento na mesma semana, deseja marcar para o mesmo dia?')
+            if (verif !== "") {
+                const opt = confirm(verif)
 
                 if (opt) {
                     document.getElementById('fconfirm').value = true
-                    document.getElementById('agenda-form').submit()
+                } else {
+                    document.getElementById('fconfirm').value = false
                 }
+                document.getElementById('agenda-form').submit()
             }
 
             const select = document.getElementById('fhora');

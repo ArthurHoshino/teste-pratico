@@ -1,14 +1,9 @@
 import express from 'express'
-import { fileURLToPath } from 'url'
-import { dirname } from 'path'
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = dirname(__filename)
+import moment from 'moment'
 
 import { getUsuarioByEmail, createUsuario } from '../db/db-functions/usuarioDb.js'
 import { getServicoPreco } from '../db/db-functions/serviceDb.js'
-
-import moment from 'moment'
-import { getAgendaByDate } from '../db/db-functions/agendaDb.js'
+import { getAgendaByDateInterval, createAgenda, updateAgenda, getAgendaByIdPag, getAgendaByDateDetalhe, updateAgendaEditar, deletarAgenda } from '../db/db-functions/agendaDb.js'
 
 const paginaRouter = express.Router()
 
@@ -26,6 +21,75 @@ const redirectDashboard = (req, res, next) => {
     } else {
         next()
     }
+}
+
+const redirectConfirmacao = async (req, res, next) => {
+    if (req.body.fconfirm === '') {
+        const hoje = moment(moment().format('YYYY-MM-DD'))
+        let semana = moment(req.body.fdata)
+        let semanaInterval = { 
+            userId: req.session.userId,
+            inicio: moment(semana.clone().startOf('week')).format('YYYY-MM-DD'),
+            final: moment(semana.clone().endOf('week')).format('YYYY-MM-DD')
+        }
+        const semanaResult = await getAgendaByDateInterval(semanaInterval)
+
+        if (semanaResult[0] !== undefined) {
+            for (let item in semanaResult) {
+                let dataAtendimento = moment(moment(semanaResult[item].data_atendimento).format('YYYY-MM-DD'))
+                let diferencaHoje = dataAtendimento.diff(hoje, 'days')
+
+                if ( diferencaHoje >= 2 ) {
+                    let agendaAnterior = moment(semanaResult[item].data_atendimento).format('DD/MM/YYYY')
+                    let mesmaData = `Você já possui um atendimento no dia ${agendaAnterior}, gostaria de marcar no mesmo dia?`
+                    
+                    req.session.formData = req.body
+                    req.session.agendaAnterior = moment(semanaResult[item].data_atendimento).format('YYYY-MM-DD HH:mm')
+                    
+                    return res.render('confirmacao', {agendaMesmaData: mesmaData})
+                }
+            }
+        }
+        next()
+    } else {
+        next()
+    }
+}
+
+const atualizarAgenda = async (req, res, next) => {
+    const hoje = moment().format('YYYY-MM-DD')
+
+    await updateAgenda({userId: req.session.userId, dataAtendimento: hoje})
+
+    next()
+}
+
+const historicoTemplateData = async (req) => {
+    const precos = await getServicoPreco()
+    const atend = moment(req.query.dataatendimento.split(' ')[0], 'DD/MM/YYYY').format('YYYY-MM-DD')
+    const data = {
+        atendInicio: `${atend} 00:00:00`,
+        atendFinal: `${atend} 23:59:59`,
+        userId: req.session.userId
+    }
+
+    const result = await getAgendaByDateDetalhe(data)
+    const atendData = moment(result[0].data_atendimento).format('YYYY-MM-DD')
+    const atendHora = moment(result[0].data_atendimento).format('HH:mm')
+
+    let info = {
+        servicoError: '',
+        dataError: '',
+        horaError: '',
+        userConfirmacao: '',
+        agendaMesmaData: '',
+        data: result,
+        atendData: atendData,
+        atendHora: atendHora
+    }
+    precos.forEach(item => {info[`${item.nome_servico}Preco`] = item.preco_servico})
+    
+    return info
 }
 
 paginaRouter.get('/', (req, res) => {
@@ -48,8 +112,24 @@ paginaRouter.get('/registro', redirectDashboard, (req, res) => {
     res.render('registro', data)
 })
 
-paginaRouter.get('/dashboard', redirectLogin, (req, res) => {
-    res.render('dashboard')
+paginaRouter.get('/dashboard', redirectLogin, atualizarAgenda, async (req, res) => {
+    const pag = parseInt(req.query.pagina) || 1
+    const perPage = 5
+    const data = {
+        pagina: pag,
+        porPagina: perPage,
+        offset: (pag - 1) * perPage,
+        userId: req.session.userId,
+        onlyAtivo: true
+    }
+
+    const result = await getAgendaByIdPag(data)
+
+    res.render('dashboard', {
+        itens: result.result,
+        paginaAtual: pag,
+        totalPaginas: result.totalPaginas
+    })
 })
 
 paginaRouter.get('/agenda', redirectLogin, async (req, res) => {
@@ -58,24 +138,51 @@ paginaRouter.get('/agenda', redirectLogin, async (req, res) => {
         servicoError: '',
         dataError: '',
         horaError: '',
-        userConfirmacao: false,
-        agendaMesmaData: false
+        userConfirmacao: '',
+        agendaMesmaData: ''
     }
     precos.forEach(item => {data[`${item.nome_servico}Preco`] = item.preco_servico})
 
     res.render('agenda', data)
 })
 
-paginaRouter.get('/historico', redirectLogin, (req, res) => {
-    res.render('historico')
+paginaRouter.get('/historico', redirectLogin, async (req, res) => {
+    const pag = parseInt(req.query.pagina) || 1
+    const perPage = 5
+    const data = {
+        pagina: pag,
+        porPagina: perPage,
+        offset: (pag - 1) * perPage,
+        userId: req.session.userId,
+        onlyAtivo: false
+    }
+
+    const result = await getAgendaByIdPag(data)
+    const dataHoje = moment().format('YYYY-MM-DD HH:mm')
+
+    res.render('historico', {
+        itens: result.result,
+        paginaAtual: pag,
+        totalPaginas: result.totalPaginas,
+        dataHoje: dataHoje
+    })
 })
 
-paginaRouter.get('/historico-detalhe', redirectLogin, (req, res) => {
-    res.render('historico_detalhe')
+paginaRouter.get('/historico-detalhe', redirectLogin, async (req, res) => {
+    const info = await historicoTemplateData(req)
+
+    res.render('historico_detalhe', info)
 })
 
-paginaRouter.get('/historico-editar', redirectLogin, (req, res) => {
-    res.render('historico_editar')
+paginaRouter.get('/historico-editar', redirectLogin, async (req, res) => {
+    req.session.oldData = req.query.dataatendimento
+    const info = await historicoTemplateData(req)
+
+    res.render('historico_editar', info)
+})
+
+paginaRouter.get('/confirmacao', redirectLogin, (req, res) => {
+    res.render('confirmacao', {agendaMesmaData: ''})
 })
 
 
@@ -100,7 +207,7 @@ paginaRouter.post('/login', async (req, res, next) => {
 
         if (data.emailError === '' && data.senhaError === '') {
             req.session.userId = user[0].idUsuario
-            return res.render('dashboard')
+            return res.redirect('/dashboard')
         } else {
             return res.render('login', data)
         }
@@ -134,12 +241,19 @@ paginaRouter.post('/registro', async (req, res, next) => {
     }
 })
 
-paginaRouter.post('/agenda', async (req, res, next) => {
+paginaRouter.post('/agenda', redirectConfirmacao, async (req, res, next) => {
     try {
-        if (req.body.fconfirm === 'true') {
-            console.log('formdata', req.session.formData)
-            req.session.formData.fconfirm = 'true'
+        if (req.body.fconfirm !== '') {
+            req.session.formData.fconfirm = req.body.fconfirm
             req.body = req.session.formData
+            
+            if (req.body.fconfirm === 'true') {
+                req.body.fdata = req.session.agendaAnterior.split(' ')[0]
+                req.body.fhora = req.session.agendaAnterior.split(' ')[1]
+            }
+
+            delete req.session.formData
+            delete req.session.agendaAnterior
         }
 
         const precos = await getServicoPreco()
@@ -148,8 +262,8 @@ paginaRouter.post('/agenda', async (req, res, next) => {
             servicoError: '',
             dataError: '',
             horaError: '',
-            userConfirmacao: false,
-            agendaMesmaData: false
+            userConfirmacao: '',
+            agendaMesmaData: ''
         }
         precos.forEach(item => {errorMessage[`${item.nome_servico}Preco`] = item.preco_servico})
         
@@ -157,11 +271,8 @@ paginaRouter.post('/agenda', async (req, res, next) => {
             errorMessage.servicoError = 'Selecione pelo menos um serviço'
             return res.render('agenda', errorMessage)
         }
-        if (req.body.fdata === '') {
-            errorMessage.dataError = 'Selecione uma data'
-            return res.render('agenda', errorMessage)
-        } else if ( hoje.diff( moment(moment(req.body.fdata)), 'days') >= 0 ) {
-            errorMessage.dataError = 'Seleciona uma data válida'
+        if ( hoje.diff( moment(moment(req.body.fdata)), 'days') > 0 ) {
+            errorMessage.dataError = 'Seleciona uma data futura'
             return res.render('agenda', errorMessage)
         }
         if (req.body.fhora === '') {
@@ -177,43 +288,44 @@ paginaRouter.post('/agenda', async (req, res, next) => {
             'obs': req.body.fobs
         }
 
-        // Verificar se existe algum outro agendamento na mesma semana
-        if (req.body.fconfirm === 'false') {
-            let semana = moment(req.body.fdata)
-            let semanaInterval = { 
-                userId: userId,
-                inicio: moment(semana.clone().startOf('week')).format('YYYY-MM-DD'),
-                final: moment(semana.clone().endOf('week')).format('YYYY-MM-DD')
-            }
-            const semanaResult = await getAgendaByDate(semanaInterval)
-    
-            if (semanaResult[0] !== undefined) {
-                let dataSelecionada = moment(moment(req.body.fdata))
-                
-                // TODO trocar isso para um for, para eu sair dele e conseguir fazer o return
-                // com o foreach ele continua e não para como eu quero
-                semanaResult.forEach(item => {
-                    let dataAtendimento = moment(moment(item.data_atendimento).format('YYYY-MM-DD'))
-                    let diferencaHoje = dataAtendimento.diff(hoje, 'days')
-    
-                    // se ele aceitar, temos que, de alguma forma, salvar a data mais perto do
-                    // inicio da semana, acho que jogar no session é uma boa...
-                    if ( diferencaHoje >= 2 ) {
-                        errorMessage.agendaMesmaData = true
-                        req.session.formData = req.body
-                        return res.render('agenda', errorMessage)
-                    }
-                })
-            }
-        }
+        const result = await createAgenda(data)
 
-        // const result = await createAgenda(data)
-
-        // res.redirect('/dashboard')
+        res.redirect('/dashboard')
     } catch (error) {
         res.status(500).redirect('/dashboard')
         next(error)
     }
+})
+
+paginaRouter.post('/historico-editar', async (req, res) => {
+    let info = await historicoTemplateData(req)
+
+    if (!req.body.opcoes) {
+        info.servicoError = 'Selecione pelo menos um serviço'
+        return res.render('historico_editar', info)
+    }
+    const oldData = moment(moment(req.session.oldData, 'DD/MM/YYYY HH:mm').format('YYYY-MM-DD HH:mm'))
+    const newData = moment(`${req.body.fdata} ${req.body.fhora}`)
+
+    let data = {
+        Usuario_idUsuario: req.session.userId,
+        oldData: moment(req.session.oldData, 'DD/MM/YYYY HH:mm').format('YYYY-MM-DD HH:mm'),
+        servico: req.body.opcoes,
+        data_atendimento: `${req.body.fdata} ${req.body.fhora}`,
+        obs: req.body.fobs
+    }
+
+    await deletarAgenda(data)
+
+    if (!oldData.isSame(newData)) {
+        await updateAgendaEditar(data)
+    }
+
+    await createAgenda(data)
+
+    delete req.session.oldData
+
+    res.redirect('/historico')
 })
 
 

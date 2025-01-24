@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/nice-forms.css@0.1.7/dist/nice-forms.css" />
+    <link rel="stylesheet" href="assets/css/registration-style.css">
+    <link rel="stylesheet" href="assets/css/mystyle.css">
+    <title>Cabeleleila Leila</title>
+</head>
+<body>
+    <div class="wrapper">
+        <h2><%= agendaMesmaData %></h2>
+        <form id="confirm-form" action="/agenda" method="post">
+            <div class="input-box button">
+                <input type="button" id="confirm" name="confirm" value="Sim">
+            </div>
+            <div class="input-box button">
+                <input type="button" id="deny" name="deny" value="Não" style="background-color: #E94647;">
+            </div>
+            <input type="text" id="fconfirm" name="fconfirm" class="confirmacao" />
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('confirm').addEventListener('click', () => {
+                document.getElementById('fconfirm').value = true
+                document.getElementById('confirm-form').submit()
+            })
+
+            document.getElementById('deny').addEventListener('click', () => {
+                document.getElementById('fconfirm').value = false
+                document.getElementById('confirm-form').submit()
+            })
+        })
+    </script>
+</body>
+</html>

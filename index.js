@@ -19,6 +19,7 @@ app.set('view engine', 'ejs')
 
 app.use(express.static('src/'))
 app.use(express.json())
+app.use(express.urlencoded({extended: true}))
 app.use(cors())
 app.use(bodyParser.urlencoded({
     extended: true

@@ -25,55 +25,65 @@
         </div>
 
         <div id="main-panel">
-            <div id="agenda-content">
+            <div id="historico-editar-content">
                 <form id="editar-form" method="post">
                     <fieldset class="nice-form-group">
                         <legend for="fservico">Serviços</legend>
                         <div class="nice-form-group">
-                            <input type="checkbox" id="corte" />
-                            <label for="corte">Corte</label>
+                            <input type="checkbox" id="corte" name="opcoes[]" value="corte" />
+                            <label for="corte">R$<%= cortePreco %>: Corte</label>
                         </div>
                         <div class="nice-form-group">
-                            <input type="checkbox" id="escova" />
-                            <label for="escova">Escova</label>
+                            <input type="checkbox" id="escova" name="opcoes[]" value="escova" />
+                            <label for="escova">R$<%= escovaPreco %>: Escova</label>
                         </div>
                         <div class="nice-form-group">
-                            <input type="checkbox" id="unha" />
-                            <label for="unha">Pé e mão</label>
+                            <input type="checkbox" id="unha" name="opcoes[]" value="unha" />
+                            <label for="unha">R$<%= unhaPreco %>: Pé e mão</label>
                         </div>
                         <div class="nice-form-group">
-                            <input type="checkbox" id="tratamento" />
-                            <label for="tratamento">Tratamento capilar</label>
+                            <input type="checkbox" id="tratamento" name="opcoes[]" value="tratamento" />
+                            <label for="tratamento">R$<%= tratamentoPreco %>: Tratamento capilar</label>
                         </div>
                         <div class="nice-form-group">
-                            <input type="checkbox" id="alisamento" />
-                            <label for="alisamento">Alisamento</label>
+                            <input type="checkbox" id="alisamento" name="opcoes[]" value="alisamento" />
+                            <label for="alisamento">R$<%= alisamentoPreco %>: Alisamento</label>
                         </div>
                         <div class="nice-form-group">
-                            <input type="checkbox" id="progressiva" />
-                            <label for="progressiva">Progressiva</label>
+                            <input type="checkbox" id="progressiva" name="opcoes[]" value="progressiva" />
+                            <label for="progressiva">R$<%= progressivaPreco %>: Progressiva</label>
                         </div>
                         <div class="nice-form-group">
-                            <input type="checkbox" id="mecha" />
-                            <label for="mecha">Mechas - Luzes - Reflexos</label>
+                            <input type="checkbox" id="mecha" name="opcoes[]" value="mecha" />
+                            <label for="mecha">R$<%= mechaPreco %>: Mechas - Luzes - Reflexos</label>
                         </div>
                         <div class="nice-form-group">
-                            <input type="checkbox" id="sobrancelha" />
-                            <label for="sobrancelha">Sobrancelha</label>
+                            <input type="checkbox" id="sobrancelha" name="opcoes[]" value="sobrancelha" />
+                            <label for="sobrancelha">R$<%= sobrancelhaPreco %>: Sobrancelha</label>
                         </div>
                         <div class="nice-form-group">
-                            <input type="checkbox" id="depilacao" />
-                            <label for="depilacao">Depilacao</label>
+                            <input type="checkbox" id="depilacao" name="opcoes[]" value="depilacao" />
+                            <label for="depilacao">R$<%= depilacaoPreco %>: Depilacao</label>
                         </div>
                         <div class="nice-form-group">
-                            <input type="checkbox" id="maquiagem" />
-                            <label for="maquiagem">Penteado e maquiagem</label>
+                            <input type="checkbox" id="maquiagem" name="opcoes[]" value="maquiagem" />
+                            <label for="maquiagem">R$<%= maquiagemPreco %>: Penteado e maquiagem</label>
                         </div>
                     </fieldset>
+                    <small id="cservico" class="error-message"><%= servicoError %></small>
             
                     <div class="nice-form-group">
                         <label for="fdata">Data do atendimento</label>
-                        <input type="datetime-local" id="fdata" name="fdata" />
+                        <input type="date" id="fdata" name="fdata" required />
+                        <small id="cdata" class="error-message"><%= dataError %></small>
+                    </div>
+
+                    <div class="nice-form-group">
+                        <label for="fhora">Selecione um horário</label>
+                        <select name="fhora" id="fhora" required>
+                            <option value="">00:00</option>
+                        </select>
+                        <small id="chora" class="error-message"><%= horaError %></small>
                     </div>
             
                     <div class="nice-form-group">
@@ -82,11 +92,39 @@
                     </div>
             
                     <button type="submit">Editar</button>
+
                 </form>
             </div>
         </div>
     </main>
     
-    <script type="module" src="../global/scripts/historico_editar.index.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const servicosArray = JSON.parse('<%- JSON.stringify(data) %>')
+            const select = document.getElementById('fhora');
+            const interval = 30;
+
+            for (let hour = 8; hour < 18; hour++) {
+                for (let minute = 0; minute < 60; minute += interval) {
+                    const time = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+                    const option = document.createElement('option');
+                    option.value = time;
+                    option.textContent = time;
+                    select.appendChild(option);
+                }
+            }
+
+            document.getElementById('fdata').value = '<%- JSON.stringify(atendData) %>'.replaceAll('"', '')
+            document.getElementById('fhora').value = '<%- JSON.stringify(atendHora) %>'.replaceAll('"', '')
+
+            servicosArray.forEach(item => {
+                document.getElementById(item.nome_servico).checked = true
+
+                if (item.obs !== null) {
+                    document.getElementById('fobs').value = item.obs
+                }
+            })
+        })
+    </script>
 </body>
 </html>

@@ -9,9 +9,7 @@ const usuarioRouter = express.Router()
 
 usuarioRouter.get('/usuario', (req, res, next) => {
     try {
-        console.log(req.session)
         const { userId } = req.session
-        console.log(userId)
 
         if (userId !== undefined) {
             res.status(200).send({message: 'Logado', status: 200})
