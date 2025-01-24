@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="assets/css/dashboard.style.css">
+    <link rel="stylesheet" href="https://unpkg.com/nice-forms.css@0.1.7/dist/nice-forms.css" />
+    <title>Cabeleleila Leila</title>
+</head>
+<body>
+    <header>
+        <h1>Cabeleleila Leila Salão de Beleiza</h1>
+        <nav>
+            <a href="/">Home</a>
+            <form action="/logout" method="post">
+                <button>Sair</button>
+            </form>
+        </nav>
+    </header>
+    <main>
+        <div id="side-panel">
+            <a href="/dashboard">Dashboard</a>
+            <a href="/agenda">Agendar atendimento</a>
+            <a href="/historico">Histórico</a>
+        </div>
+
+        <div id="main-panel">
+            <div id="historico-content">
+                <div id="lista-itens">
+                    <table id="tabela-itens">
+                        <tr>
+                            <th>ID</th>
+                            <th>Data do agendamento</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </table>
+                </div>
+                <div id="paginacao">
+                    <button id="anterior" onclick="paginaAnterior()">Anterior</button>
+                    <span>Página <span id="pagina-atual"></span> de <span id="total-paginas"></span></span>
+                    <button id="proximo" onclick="proximaPagina()">Próximo</button>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <script src="../global/scripts/historico.index.js"></script>
+</body>
+</html>

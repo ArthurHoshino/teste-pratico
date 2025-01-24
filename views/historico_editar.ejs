@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="assets/css/dashboard.style.css">
+    <link rel="stylesheet" href="https://unpkg.com/nice-forms.css@0.1.7/dist/nice-forms.css" />
+    <title>Cabeleleila Leila</title>
+</head>
+<body>
+    <header>
+        <h1>Cabeleleila Leila Salão de Beleiza</h1>
+        <nav>
+            <a href="/">Home</a>
+            <form action="/logout" method="post">
+                <button>Sair</button>
+            </form>
+        </nav>
+    </header>
+    <main>
+        <div id="side-panel">
+            <a href="/dashboard">Dashboard</a>
+            <a href="/agenda">Agendar atendimento</a>
+            <a href="/historico">Histórico</a>
+        </div>
+
+        <div id="main-panel">
+            <div id="agenda-content">
+                <form id="editar-form" method="post">
+                    <fieldset class="nice-form-group">
+                        <legend for="fservico">Serviços</legend>
+                        <div class="nice-form-group">
+                            <input type="checkbox" id="corte" />
+                            <label for="corte">Corte</label>
+                        </div>
+                        <div class="nice-form-group">
+                            <input type="checkbox" id="escova" />
+                            <label for="escova">Escova</label>
+                        </div>
+                        <div class="nice-form-group">
+                            <input type="checkbox" id="unha" />
+                            <label for="unha">Pé e mão</label>
+                        </div>
+                        <div class="nice-form-group">
+                            <input type="checkbox" id="tratamento" />
+                            <label for="tratamento">Tratamento capilar</label>
+                        </div>
+                        <div class="nice-form-group">
+                            <input type="checkbox" id="alisamento" />
+                            <label for="alisamento">Alisamento</label>
+                        </div>
+                        <div class="nice-form-group">
+                            <input type="checkbox" id="progressiva" />
+                            <label for="progressiva">Progressiva</label>
+                        </div>
+                        <div class="nice-form-group">
+                            <input type="checkbox" id="mecha" />
+                            <label for="mecha">Mechas - Luzes - Reflexos</label>
+                        </div>
+                        <div class="nice-form-group">
+                            <input type="checkbox" id="sobrancelha" />
+                            <label for="sobrancelha">Sobrancelha</label>
+                        </div>
+                        <div class="nice-form-group">
+                            <input type="checkbox" id="depilacao" />
+                            <label for="depilacao">Depilacao</label>
+                        </div>
+                        <div class="nice-form-group">
+                            <input type="checkbox" id="maquiagem" />
+                            <label for="maquiagem">Penteado e maquiagem</label>
+                        </div>
+                    </fieldset>
+            
+                    <div class="nice-form-group">
+                        <label for="fdata">Data do atendimento</label>
+                        <input type="datetime-local" id="fdata" name="fdata" />
+                    </div>
+            
+                    <div class="nice-form-group">
+                        <label for="fobs">Observações</label>
+                        <textarea name="fobs" id="fobs" rows="5"></textarea>
+                    </div>
+            
+                    <button type="submit">Editar</button>
+                </form>
+            </div>
+        </div>
+    </main>
+    
+    <script type="module" src="../global/scripts/historico_editar.index.js"></script>
+</body>
+</html>

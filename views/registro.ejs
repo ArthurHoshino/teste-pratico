@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/nice-forms.css@0.1.7/dist/nice-forms.css" />
+    <link rel="stylesheet" href="assets/css/registration-style.css">
+    <title>Cabeleleila Leila</title>
+</head>
+<body>
+    <div class="wrapper">
+        <h2>Criar conta</h2>
+        <form id="form" method="post">
+            <div class="nice-form-group">
+                <input type="text" placeholder="Nome" id="fnome" name="fnome" required>
+                <small id="cnome" class="error-message"></small>
+            </div>
+
+            <div class="nice-form-group">
+                <input type="email" placeholder="E-mail" id="femail" name="femail" required />
+                <small id="cemail" class="error-message"><%= emailError %></small>
+            </div>
+
+            <div class="nice-form-group">
+                <input
+                    type="password"
+                    placeholder="Senha"
+                    id="fsenha" 
+                    name="fsenha"
+                    required 
+                />
+                <small id="csenha" class="error-message"></small>
+            </div>
+
+            <div class="nice-form-group">
+                <input 
+                    type="password" 
+                    placeholder="Confirmar senha" 
+                    id="fsenhaconfirma" 
+                    name="fsenhaconfirma"
+                    required 
+                />
+                <small id="csenhaconfirma" class="error-message"></small>
+            </div>
+
+            <div class="input-box button">
+                <input id="submitBtn" type="submit" value="Registrar">
+            </div>
+            
+            <div class="text">
+                <h3>Já possui conta? <a href="/login">Entre aqui</a></h3>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const btn = document.getElementById('submitBtn')
+            document.getElementById('fnome').addEventListener('input', () => {
+                let nome = document.getElementById('fnome').value
+                let nomeError = document.getElementById('cnome')
+
+                if (nome.length < 3) {
+                    nomeError.innerHTML = 'Nome inválido'
+                } else {
+                    nomeError.innerHTML = ''
+                }
+            })
+    
+            document.getElementById('fsenha').addEventListener('input', () => {
+                let passwordValidation = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%& "]).{8,}$/
+                let senha = document.getElementById('fsenha').value
+                let error = document.getElementById('csenha')
+    
+                if (!passwordValidation.test(senha)) {
+                    error.innerHTML = 'Senha deve ter no mínimo 8 caracteres, incluindo letras maiúsculas, minúsculas, números e caracteres especiais'
+                    btn.disabled = true
+                } else {
+                    error.innerHTML = ''
+                    btn.disabled = false
+                }
+            })
+    
+            document.getElementById('fsenhaconfirma').addEventListener('input', () => {
+                let senha = document.getElementById('fsenha').value
+                let confirma = document.getElementById('fsenhaconfirma').value
+                let error = document.getElementById('csenhaconfirma')
+    
+                if (senha !== confirma) {
+                    error.innerHTML = 'Senhas precisam ser iguais'
+                    btn.disabled = true
+                } else {
+                    error.innerHTML = ''
+                    btn.disabled = false
+                }
+            })
+        })
+    </script>
+</body>
+</html>

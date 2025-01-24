@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="assets/css/dashboard.style.css">
+    <link rel="stylesheet" href="assets/css/mystyle.css">
+    <link rel="stylesheet" href="https://unpkg.com/nice-forms.css@0.1.7/dist/nice-forms.css" />
+    <title>Cabeleleila Leila</title>
+</head>
+<body>
+    <header>
+        <h1>Cabeleleila Leila Salão de Beleiza</h1>
+        <nav>
+            <a href="/">Home</a>
+            <form action="/logout" method="post">
+                <button>Sair</button>
+            </form>
+        </nav>
+    </header>
+    <main>
+        <div id="side-panel">
+            <a href="/dashboard">Dashboard</a>
+            <a href="/agenda">Agendar atendimento</a>
+            <a href="/historico">Histórico</a>
+        </div>
+
+        <div id="main-panel">
+            <div id="agenda-content">
+                <form id="agenda-form" action="/agenda" method="post">
+                    <fieldset class="nice-form-group">
+                        <legend for="fservico">Serviços</legend>
+                        <div class="nice-form-group">
+                            <input type="checkbox" id="corte" name="opcoes[]" value="corte" />
+                            <label for="corte">R$<%= cortePreco %>: Corte</label>
+                        </div>
+                        <div class="nice-form-group">
+                            <input type="checkbox" id="escova" name="opcoes[]" value="escova" />
+                            <label for="escova">R$<%= escovaPreco %>: Escova</label>
+                        </div>
+                        <div class="nice-form-group">
+                            <input type="checkbox" id="unha" name="opcoes[]" value="unha" />
+                            <label for="unha">R$<%= unhaPreco %>: Pé e mão</label>
+                        </div>
+                        <div class="nice-form-group">
+                            <input type="checkbox" id="tratamento" name="opcoes[]" value="tratamento" />
+                            <label for="tratamento">R$<%= tratamentoPreco %>: Tratamento capilar</label>
+                        </div>
+                        <div class="nice-form-group">
+                            <input type="checkbox" id="alisamento" name="opcoes[]" value="alisamento" />
+                            <label for="alisamento">R$<%= alisamentoPreco %>: Alisamento</label>
+                        </div>
+                        <div class="nice-form-group">
+                            <input type="checkbox" id="progressiva" name="opcoes[]" value="progressiva" />
+                            <label for="progressiva">R$<%= progressivaPreco %>: Progressiva</label>
+                        </div>
+                        <div class="nice-form-group">
+                            <input type="checkbox" id="mecha" name="opcoes[]" value="mecha" />
+                            <label for="mecha">R$<%= mechaPreco %>: Mechas - Luzes - Reflexos</label>
+                        </div>
+                        <div class="nice-form-group">
+                            <input type="checkbox" id="sobrancelha" name="opcoes[]" value="sobrancelha" />
+                            <label for="sobrancelha">R$<%= sobrancelhaPreco %>: Sobrancelha</label>
+                        </div>
+                        <div class="nice-form-group">
+                            <input type="checkbox" id="depilacao" name="opcoes[]" value="depilacao" />
+                            <label for="depilacao">R$<%= depilacaoPreco %>: Depilacao</label>
+                        </div>
+                        <div class="nice-form-group">
+                            <input type="checkbox" id="maquiagem" name="opcoes[]" value="maquiagem" />
+                            <label for="maquiagem">R$<%= maquiagemPreco %>: Penteado e maquiagem</label>
+                        </div>
+                    </fieldset>
+                    <small id="cservico" class="error-message"><%= servicoError %></small>
+            
+                    <div class="nice-form-group">
+                        <label for="fdata">Data do atendimento</label>
+                        <input type="date" id="fdata" name="fdata" />
+                        <small id="cdata" class="error-message"><%= dataError %></small>
+                    </div>
+
+                    <div class="nice-form-group">
+                        <label for="fhora">Selecione um horário</label>
+                        <select name="fhora" id="fhora" required>
+                            <option value="">00:00</option>
+                        </select>
+                        <small id="chora" class="error-message"><%= horaError %></small>
+                    </div>
+            
+                    <div class="nice-form-group">
+                        <label for="fobs">Observações</label>
+                        <textarea name="fobs" id="fobs" rows="5"></textarea>
+                    </div>
+
+                    <div class="nice-form-group confirmacao">
+                        <input type="text" id="fconfirm" name="fconfirm" value="<%= userConfirmacao %>" />
+                    </div>
+            
+                    <button id="submitBtn" type="submit">Agendar</button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const verif = '<%= agendaMesmaData %>'
+            if (verif !== "false") {
+                const opt = confirm('Você possui um agendamento na mesma semana, deseja marcar para o mesmo dia?')
+
+                if (opt) {
+                    document.getElementById('fconfirm').value = true
+                    document.getElementById('agenda-form').submit()
+                }
+            }
+
+            const select = document.getElementById('fhora');
+            const interval = 30;
+
+            for (let hour = 8; hour < 18; hour++) {
+                for (let minute = 0; minute < 60; minute += interval) {
+                    const time = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+                    const option = document.createElement('option');
+                    option.value = time;
+                    option.textContent = time;
+                    select.appendChild(option);
+                }
+            }
+        })
+    </script>
+</body>
+</html>
