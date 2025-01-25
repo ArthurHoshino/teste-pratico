@@ -28,7 +28,7 @@ para conectar ao seu banco. Em seguida, instale as dependências para o projeto 
 npm install
 ```
 
-Agora vamos criar as tabelas do nosso banco:
+Agora vamos criar as tabelas do nosso banco (se preferir, o arquivo SQL com alguns dados de teste está na pasta `db`):
 ```bash
 node .\createTables.js
 ```
