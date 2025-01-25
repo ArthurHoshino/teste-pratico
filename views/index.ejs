@@ -23,12 +23,18 @@
                         <li class="header-top-contact">
                             (14) 91111-2222
                         </li>
-                        <li class="header-top-contact">
-                            <a href="/login">Entrar</a>
-                        </li>
-                        <li class="header-top-contact">
-                            <a href="/registro">Registrar</a>
-                        </li>
+                        <% if (userId === undefined) { %>
+                            <li class="header-top-contact">
+                                <a href="/login">Entrar</a>
+                            </li>
+                            <li class="header-top-contact">
+                                <a href="/registro">Registrar</a>
+                            </li>
+                        <% } else { %>
+                            <li class="header-top-contact">
+                                <a href="/dashboard">Dashboard</a>
+                            </li>
+                        <% } %>
                     </ul>
                 </div>
             </li> 

@@ -185,8 +185,6 @@ export async function updateAgenda(data) {
 }
 
 export async function updateAgendaEditar(data) {
-    console.log(data)
-    
     const result = await pool.query(`
     UPDATE Usuario_has_Servico
     SET data_atendimento = ?, updatedAt = NOW()

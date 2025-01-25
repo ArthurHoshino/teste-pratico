@@ -93,7 +93,7 @@ const historicoTemplateData = async (req) => {
 }
 
 paginaRouter.get('/', (req, res) => {
-    res.render('index')
+    res.render('index', {userId: req.session.userId})
 })
 
 paginaRouter.get('/login', redirectDashboard, (req, res, next) => {

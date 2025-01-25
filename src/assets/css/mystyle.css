@@ -1,3 +1,23 @@
 .confirmacao {
-    display: none;
+  display: none;
 }
+
+.agenda-form {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.historico-actions {
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  padding: 4px 8px;
+  font-size: 12px;
+  background-color: rgba(89, 113, 157, 0.2);
+  margin-right: 3px;
+}
+.historico-actions a {
+  color: #59719d;
+}
+
