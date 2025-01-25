@@ -44,6 +44,12 @@ pode logar no sistema utilizando o e-mail e senha abaixo, entretanto para criar 
 |:------|------:|
 |teste@email.com|qwer|
 
+### Imagens do projeto
+![Tela inicial](/projeto-imagens-video/1-main.png?raw=true)
+![Dashboard](/projeto-imagens-video/5-dashboard.png?raw=true)
+
+Encontre outras imagens e vídeo passando pelo sistema na pasta `projeto-imagens-video`
+
 ---
 Estilização e imagens por:<br/> 
 [Themesine](https://www.themesine.com/)<br/>
