@@ -9,6 +9,16 @@
 * EJS
 * MySQL 8.0
 
+**Node.js** é um ambiente de tempo de execução de JavaScript criado usando a engine de JavaScript do Chrome, que utiliza um modelo assíncrono e não bloqueador, oferecendo um ambiente de execução de back-end, permitindo a o desenvolvimento tanto do back-end quanto do front-end na mesma linguagem.
+<br/>
+<br/>
+Em conjunto com o Node.JS, foi utilizar o framework **Express.JS** para auxiliar na criação do sistema web, pois oferece ferramentas para tratar solicitações e requisições HTTP, roteamento e middleware.
+<br/>
+<br/>
+As páginas do sistema foram montadas utilizando **EJS** (Embedded JavaScript templating) que permite a inserção de códig JavaScript em arquivos HTML, facilitando a criação de páginas dinâmicas através da renderização dos dados no lado do servidor.
+<br/>
+<br/>
+Para o banco de dados, foi utilizado o MySQL pelo seu desempenho, ser bastante utilizado e facilidade de uso.
 
 
 ### 💻 Executando o projeto

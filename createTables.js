@@ -25,4 +25,4 @@ async function executarSQL(filePath) {
     }
 }
 
-executarSQL('tables.sql')
+executarSQL('./db/tables.sql')
