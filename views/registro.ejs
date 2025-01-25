@@ -62,8 +62,10 @@
 
                 if (nome.length < 3) {
                     nomeError.innerHTML = 'Nome inválido'
+                    btn.disabled = true
                 } else {
                     nomeError.innerHTML = ''
+                    btn.disabled = false
                 }
             })
     
